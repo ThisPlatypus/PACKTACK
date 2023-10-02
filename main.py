@@ -12,12 +12,14 @@ from scipy.stats import randint
 dataset_name=['CTU-IoT-Malware-Capture-21-1','CTU-IoT-Malware-Capture-42-1', 'CTU-IoT-Malware-Capture-3-1']
 
 
-# LOAD DATA
-dati={}
-for data_name in dataset_name:
-    dati[data_name] = pd.read_csv(f"/Users/chiara/PycharmProjects/PACKTACK/CleanData/{data_name}.txt", sep="\t", header=0)
-
-
+dati = {
+    data_name: pd.read_csv(
+        f"/Users/chiara/PycharmProjects/PACKTACK/CleanData/{data_name}.txt",
+        sep="\t",
+        header=0,
+    )
+    for data_name in dataset_name
+}
 # Standardizzation
 from sklearn import preprocessing
 import numpy as np
@@ -84,9 +86,16 @@ def combine_rfs(rf_a, rf_b):
 
 
 # TRAIN
-rfs=[]
-for dato in ['CTU-IoT-Malware-Capture-21-1','CTU-IoT-Malware-Capture-42-1','CTU-IoT-Malware-Capture-3-1' ]: #dati:
-    rfs.append( generate_rf(X_train[dato], y_train[dato], X_test[dato], y_test[dato], best_rf[dato]))
+rfs = [
+    generate_rf(
+        X_train[dato], y_train[dato], X_test[dato], y_test[dato], best_rf[dato]
+    )
+    for dato in [
+        'CTU-IoT-Malware-Capture-21-1',
+        'CTU-IoT-Malware-Capture-42-1',
+        'CTU-IoT-Malware-Capture-3-1',
+    ]
+]
 rf_combined = functools.reduce(combine_rfs,rfs)
 # the combined model scores better than *most* of the component models
 X=np.concatenate([X_test['CTU-IoT-Malware-Capture-21-1'],X_test['CTU-IoT-Malware-Capture-42-1'],X_test['CTU-IoT-Malware-Capture-3-1']], axis=0)
